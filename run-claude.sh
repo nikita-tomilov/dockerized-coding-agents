@@ -4,6 +4,7 @@ docker run --rm -it \
   --user "$(id -u):$(id -g)" \
   --tmpfs /tmp:rw,nosuid,size=512m \
   -v "$PWD":"$PWD" \
+  -v "$HOME/.claude.json:/home/node/.claude.json" \
   -v "$HOME/.claude:/home/node/.claude" \
   -v "$HOME/.config/claude:/home/node/.config/claude" \
   -e HOME=/home/node \
