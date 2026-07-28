@@ -17,13 +17,15 @@ services:
     networks:
       - dock-code-ag-internal
       - dock-code-ag-external
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - dock-code-mitm-certs:/home/mitmproxy/.mitmproxy
       - ./allowlist.py:/addons/allowlist.py:ro
 
-  dock-code-ag-main:
+  dock-code-ag-claude:
     image: nikitatomilov/agentshell
-    container_name: dock-code-ag-main
+    container_name: dock-code-ag-claude
     depends_on: 
       - dock-code-ag-proxy
     networks:
@@ -41,10 +43,38 @@ services:
       - /tmp:rw,nosuid,size=512m
     volumes:
       - ${PWD}:${PWD}
-      - ${HOME}/.claude.json:/home/node/.claude.json
-      - ${HOME}/.claude:/home/node/.claude
-      - ${HOME}/.config/claude:/home/node/.config/claude
-      - dock-code-mitm-certs:/certs:ro
+      - ${HOME}/.claude-mitm.json:/home/node/.claude.json
+      - ${HOME}/.claude-mitm:/home/node/.claude
+      - ${HOME}/.config/claude-mitm:/home/node/.config/claude
+      - dock-code-mitm-certs:/certs:ro0
+    working_dir: ${PWD}
+    tty: true
+    stdin_open: true
+
+  dock-code-ag-codex:
+    image: nikitatomilov/agentshell
+    container_name: dock-code-ag-codex
+    depends_on:
+      - dock-code-ag-proxy
+    networks:
+      - dock-code-ag-internal
+    environment:
+      - HOME=/home/node
+      - HTTP_PROXY=http://dock-code-ag-proxy:8080
+      - HTTPS_PROXY=http://dock-code-ag-proxy:8080
+      - http_proxy=http://dock-code-ag-proxy:8080
+      - https_proxy=http://dock-code-ag-proxy:8080
+      - NO_PROXY=localhost,127.0.0.1,::1
+      - no_proxy=localhost,127.0.0.1,::1
+      - NODE_EXTRA_CA_CERTS=/certs/mitmproxy-ca-cert.pem
+      - CODEX_CA_CERTIFICATE=/certs/mitmproxy-ca-cert.pem
+    tmpfs:
+      - /tmp:rw,nosuid,size=512m
+    volumes:
+      - ${PWD}:${PWD}
+      - ${HOME}/.codex-mitm:/home/node/.codex
+      - ${HOME}/.config/codex-mitm:/home/node/.config/codex
+      - dock-code-mitm-certs:/certs:ro0
     working_dir: ${PWD}
     tty: true
     stdin_open: true
