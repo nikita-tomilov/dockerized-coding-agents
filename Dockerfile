@@ -35,5 +35,13 @@ RUN echo 'export PS1="\[\e[32m\]\u@\h\[\e[0m\]:\[\e[34m\]\w\[\e[0m\]\$ "' >> /ho
 # Install more agents
 RUN curl https://cursor.com/install -fsS | bash
 
+# Install Python and uv
+RUN curl https://astral.sh/uv/install.sh -fsSL | sh
+ENV PATH="/home/node/.local/bin:${PATH}"
+RUN uv python install 3.12
+# Do not override .venv from the machine
+ENV UV_PROJECT_ENVIRONMENT=/home/node/.venv-agentshell-linux
+ENV UV_LINK_MODE=copy
+
 # Entrypoint
 CMD ["/bin/bash"]
