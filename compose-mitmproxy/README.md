@@ -40,7 +40,7 @@ The configuration of the agent is altered accordingly, so that any MCP on `local
 via the `host.docker.internal`. Your MCP running on `localhost` may not be able to allow access from
 clients if clients send the header `Host: host.docker.internal`. If this is the case, you have to
 either configure your MCP server accordingly or use some kind of additional proxy to alter this
-header.
+header, like [this one](https://github.com/nikita-tomilov/mcp-gateway).
 
 ## Security note
 
