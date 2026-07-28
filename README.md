@@ -61,8 +61,12 @@ Then, from any project directory, run:
 codex
 ```
 
+## Use the image behind an allowlisted proxy
+
+See the [mitmproxy Compose example](compose-mitmproxy/README.md) for instructions on running an agent (Claude Code in this example) behind an allowlisted proxy.
+
 ## Security note
 
 This is deliberately a lightweight manual setup, not a hardened sandbox. The launch scripts mount your current working directory and agent credentials/configuration into the container. Agents are started with skip-permission-checks where applicable.
 
-Review the scripts and use them only with projects and credentials you are comfortable exposing to the agent container.
+An allowlisted proxy narrows outbound network access, but it is not a complete security boundary: HTTPS traffic is decrypted at the local proxy and the container still receives your mounted project and agent credentials. Review the scripts and use them only with projects and credentials you are comfortable exposing to the agent container.

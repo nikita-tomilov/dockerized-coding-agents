@@ -5,9 +5,11 @@ ARG USER_ID=1000
 ARG GROUP_ID=1000
 
 ENV HOME=/home/node
-RUN groupmod --gid "${GROUP_ID}" node \
+RUN if ! getent group "${GROUP_ID}" >/dev/null; then \
+      groupmod --gid "${GROUP_ID}" node; \
+    fi \
     && usermod --uid "${USER_ID}" --gid "${GROUP_ID}" node \
-    && chown -R node:node /home/node
+    && chown -R "${USER_ID}:${GROUP_ID}" /home/node
 
 # Install python (useful for agents)
 RUN apt-get update && apt-get install -y --no-install-recommends \

@@ -1,0 +1,50 @@
+version: "3.8"
+
+networks:
+  dock-code-ag-internal:
+    internal: true
+  dock-code-ag-external:
+    driver: bridge
+
+volumes:
+  dock-code-mitm-certs:
+
+services:
+  dock-code-ag-proxy:
+    image: mitmproxy/mitmproxy
+    container_name: dock-code-ag-proxy
+    command: mitmdump -s /addons/allowlist.py --listen-port 8080
+    networks:
+      - dock-code-ag-internal
+      - dock-code-ag-external
+    volumes:
+      - dock-code-mitm-certs:/home/mitmproxy/.mitmproxy
+      - ./allowlist.py:/addons/allowlist.py:ro
+
+  dock-code-ag-main:
+    image: nikitatomilov/agentshell
+    container_name: dock-code-ag-main
+    depends_on: 
+      - dock-code-ag-proxy
+    networks:
+      - dock-code-ag-internal
+    environment:
+      - HOME=/home/node
+      - HTTP_PROXY=http://dock-code-ag-proxy:8080
+      - HTTPS_PROXY=http://dock-code-ag-proxy:8080
+      - http_proxy=http://dock-code-ag-proxy:8080
+      - https_proxy=http://dock-code-ag-proxy:8080
+      - NO_PROXY=localhost,127.0.0.1,::1
+      - no_proxy=localhost,127.0.0.1,::1
+      - NODE_EXTRA_CA_CERTS=/certs/mitmproxy-ca-cert.pem
+    tmpfs:
+      - /tmp:rw,nosuid,size=512m
+    volumes:
+      - ${PWD}:${PWD}
+      - ${HOME}/.claude.json:/home/node/.claude.json
+      - ${HOME}/.claude:/home/node/.claude
+      - ${HOME}/.config/claude:/home/node/.config/claude
+      - dock-code-mitm-certs:/certs:ro
+    working_dir: ${PWD}
+    tty: true
+    stdin_open: true
