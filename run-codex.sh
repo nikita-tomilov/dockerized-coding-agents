@@ -10,4 +10,4 @@ docker run --rm -it \
   -e HOME=/home/node \
   -w "$PWD" \
   nikitatomilov/agentshell \
-  /usr/local/bin/codex --sandbox danger-full-access "$@"
+  /usr/local/bin/codex --dangerously-bypass-approvals-and-sandbox "$@"
