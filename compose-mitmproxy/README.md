@@ -25,6 +25,10 @@ Arguments are passed to Claude or Codex as usual:
 /path/to/dockerized-coding-agents/compose-mitmproxy/run-claude-mitm.sh --help
 ```
 
+Both launchers detect the host timezone on Linux and macOS and pass it through `TZ`.
+You can override it with `TZ=Europe/Berlin /path/to/dockerized-coding-agents/compose-mitmproxy/run-codex-mitm.sh`.
+When invoking `docker compose` directly, export `TZ` yourself to select a timezone.
+
 The example Compose configuration mounts the current project directory, necessary configuration per
 agent and a generated proxy CA certificate. The certificate is exposed only to the agent container
 and is configured through `NODE_EXTRA_CA_CERTS` or similar, so agent can still use HTTPS through the

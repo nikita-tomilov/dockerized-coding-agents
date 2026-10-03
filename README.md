@@ -6,7 +6,7 @@ container-management tools.
 
 The image includes:
 
-- OpenAI Codex
+- OpenAI Codex and its ACP adapter
 - Claude Code
 - Cursor Agent
 - Pi coding agent
@@ -59,6 +59,26 @@ Arguments are passed through to the underlying agent. For example:
 ```bash
 /path/to/dockerized-coding-agents/run-codex.sh --help
 ```
+
+### Timezone on Linux and macOS
+
+All launchers, including the shell, ACP adapter, and proxy launchers, detect the host timezone
+and pass its name to the container through `TZ`. They read the `/etc/localtime` symlink on Linux
+and macOS, with `timedatectl` and `/etc/timezone` as Linux fallbacks. If detection fails, they
+print a warning to stderr and use `Etc/UTC`.
+
+An explicit `TZ` takes precedence; an empty `TZ` selects UTC. For example:
+
+```bash
+TZ=Europe/Berlin /path/to/dockerized-coding-agents/run-codex.sh
+```
+
+Rebuild the image with `./build.sh` after updating: it explicitly installs `tzdata` for named
+timezones and daylight saving rules. Host timezone files do not need to be shared with Docker.
+
+The direct launchers use host networking. On Docker Desktop for macOS, enable host networking
+in Settings → Resources → Network (Docker Desktop 4.34 or later); see
+[Docker's host networking documentation](https://docs.docker.com/engine/network/drivers/host/).
 
 ## Optional shell aliases
 

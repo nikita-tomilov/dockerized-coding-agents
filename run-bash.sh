@@ -1,4 +1,7 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/timezone.sh"
+
 echo -e
 docker run --rm -it \
   --network host \
@@ -6,6 +9,7 @@ docker run --rm -it \
   --tmpfs /tmp:rw,nosuid,size=512m \
   -v "$PWD":"$PWD" \
   -e HOME=/home/node \
+  -e TZ \
   -w "$PWD" \
   nikitatomilov/agentshell \
   /bin/bash

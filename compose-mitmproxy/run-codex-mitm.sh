@@ -6,6 +6,7 @@ mkdir -p ~/.config/codex-mitm
 cat ~/.codex/config.toml | sed -e 's/localhost/host.docker.internal/g' > ~/.codex-mitm/config.toml
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../timezone.sh"
 COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 
 docker compose -f "$COMPOSE_FILE" run --rm dock-code-ag-codex \

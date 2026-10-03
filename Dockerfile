@@ -11,15 +11,18 @@ RUN if ! getent group "${GROUP_ID}" >/dev/null; then \
     && usermod --uid "${USER_ID}" --gid "${GROUP_ID}" node \
     && chown -R "${USER_ID}:${GROUP_ID}" /home/node
 
-# Install python (useful for agents)
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install Python (useful for agents), ripgrep, and named timezone data
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
     python3-venv \
+    ripgrep \
+    tzdata \
     && rm -rf /var/lib/apt/lists/*
 
 # Install agents
 RUN npm install -g @openai/codex
+RUN npm install -g @agentclientprotocol/codex-acp
 RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 RUN npm install -g @anthropic-ai/claude-code
 
